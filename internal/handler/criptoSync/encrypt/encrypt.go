@@ -23,8 +23,10 @@ func Run(c *gin.Context) {
 	}
 
 	tempFile := util.CreateTempFile(c, fileName, fileBytes, errResponse)
-
-	encryptFiles(tempFile.Name(), tempFileName, []byte("461sa298476dasda12919645dcbevvkef"))
+	err = encryptFiles(tempFile.Name(), tempFileName, []byte("123456789qwertyu"))
+	if err != nil {
+		log.Fatalln(err)
+	}
 	log.Println("arquivo criptografado com sucesso")
 
 	returnFileBytes, err := os.ReadFile(tempFileName)
