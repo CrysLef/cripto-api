@@ -24,7 +24,7 @@ func Run(c *gin.Context) {
 
 	tempFile := util.CreateTempFile(c, fileName, fileBytes, errResponse)
 
-	decryptFiles(tempFile.Name(), tempFileName, []byte("461sa298476dasda12919645dcbevvkef"))
+	decryptFiles(tempFile.Name(), tempFileName, []byte("123456789qwertyu"))
 	log.Println("arquivo criptografado com sucesso")
 
 	returnFileBytes, err := os.ReadFile(tempFileName)
