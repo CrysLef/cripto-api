@@ -1,6 +1,8 @@
 package decrypt
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
 	"log"
 
 	"github.com/CrysLef/cripto-api/internal/util"
@@ -24,17 +26,19 @@ func decryptFiles(fileInput, fileOutput string, key []byte) error {
 		return err
 	}
 
-	iv := make([]byte, len(key))
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return err
+	}
+
+	iv := make([]byte, block.BlockSize())
 
 	msgLen := fi.Size() - int64(len(iv))
 	if _, err = inFile.ReadAt(iv, msgLen); err != nil {
 		log.Fatal("erro ao ler iv: ", err)
 	}
 
-	stream, err := util.CreateCTRValidator(key, iv)
-	if err != nil {
-		return err
-	}
+	stream := cipher.NewCTR(block, iv)
 
 	if err := readEncryptedFile(inFile, outFile, msgLen, buf, stream); err != nil {
 		return err

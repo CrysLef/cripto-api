@@ -1,6 +1,11 @@
 package encrypt
 
-import "github.com/CrysLef/cripto-api/internal/util"
+import (
+	"crypto/aes"
+	"crypto/cipher"
+
+	"github.com/CrysLef/cripto-api/internal/util"
+)
 
 func encryptFiles(fileInput, fileOutput string, key []byte) error {
 	buf := make([]byte, 4096)
@@ -9,21 +14,25 @@ func encryptFiles(fileInput, fileOutput string, key []byte) error {
 	if err != nil {
 		return err
 	}
+	defer inFile.Close()
 
 	outFile, err := util.OutputFile(fileOutput)
 	if err != nil {
 		return err
 	}
+	defer outFile.Close()
 
-	iv, err := createInitializeVector(len(key))
+	block, err := aes.NewCipher(key)
 	if err != nil {
 		return err
 	}
 
-	stream, err := util.CreateCTRValidator(key, iv)
+	iv, err := createInitializeVector(block.BlockSize())
 	if err != nil {
-		return nil
+		return err
 	}
+
+	stream := cipher.NewCTR(block, iv)
 
 	if err := writeEncryptedFile(inFile, outFile, buf, stream); err != nil {
 		return err
