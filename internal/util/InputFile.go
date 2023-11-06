@@ -7,7 +7,6 @@ func InputFile(file string) (*os.File, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
 
 	return f, nil
 }
